@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { createSupabaseServerClient } from "../../lib/supabase/server";
 import { getWatchlist } from "@/lib/api";
 
 const verdictStyles: Record<string, string> = {
@@ -7,17 +9,31 @@ const verdictStyles: Record<string, string> = {
 };
 
 export default async function DashboardPage() {
-  const stocks = await getWatchlist();
+  const supabase = await createSupabaseServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const stocks = await getWatchlist(user?.id);
 
   return (
     <main className="mx-auto max-w-2xl p-6">
-      <h1 className="mb-6 text-2xl font-semibold">Your Stocks</h1>
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-semibold">Your Stocks</h1>
+        <Link
+          href="/add-stock"
+          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        >
+          + Add stock
+        </Link>
+      </div>
 
       <div className="space-y-3">
         {stocks.map((stock) => (
-          <div
+          <Link
             key={stock.ticker}
-            className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm"
+            href={`/stock/${stock.ticker}?approach=${stock.approach}`}
+            className="flex items-center justify-between rounded-lg border bg-white p-4 shadow-sm transition hover:bg-gray-50"
           >
             <div>
               <div className="flex items-center gap-2">
@@ -38,11 +54,17 @@ export default async function DashboardPage() {
                   stock.day_change_pct >= 0 ? "text-sm text-green-600" : "text-sm text-red-600"
                 }
               >
-                {stock.day_change_pct >= 0 ? "▲" : "▼"} {Math.abs(stock.day_change_pct)}%
+                {stock.day_change_pct >= 0 ? "\u25B2" : "\u25BC"} {Math.abs(stock.day_change_pct)}%
               </div>
             </div>
-          </div>
+          </Link>
         ))}
+
+        {stocks.length === 0 && (
+          <p className="rounded-lg border border-dashed p-6 text-center text-sm text-gray-500">
+            No stocks yet — add one to get started.
+          </p>
+        )}
       </div>
     </main>
   );
