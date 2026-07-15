@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createSupabaseServerClient } from "../../lib/supabase/server";
 import { getWatchlist } from "@/lib/api";
+import { SignOutButton } from "@/components/SignOutButton";
 
 const verdictStyles: Record<string, string> = {
   buy: "bg-green-100 text-green-800",
@@ -18,14 +19,17 @@ export default async function DashboardPage() {
 
   return (
     <main className="mx-auto max-w-2xl p-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">Your Stocks</h1>
-        <Link
-          href="/add-stock"
-          className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-        >
-          + Add stock
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/add-stock"
+            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
+          >
+            + Add stock
+          </Link>
+          <SignOutButton />
+        </div>
       </div>
 
       <div className="space-y-3">
@@ -54,7 +58,7 @@ export default async function DashboardPage() {
                   stock.day_change_pct >= 0 ? "text-sm text-green-600" : "text-sm text-red-600"
                 }
               >
-                {stock.day_change_pct >= 0 ? "\u25B2" : "\u25BC"} {Math.abs(stock.day_change_pct)}%
+                {stock.day_change_pct >= 0 ? "▲" : "▼"} {Math.abs(stock.day_change_pct)}%
               </div>
             </div>
           </Link>

@@ -79,6 +79,16 @@ export async function pollAnalysis(requestId: string): Promise<PollAnalysisResul
   return res.json();
 }
 
+export async function removeFromWatchlist(userId: string, ticker: string): Promise<void> {
+  const res = await fetch(
+    `${BACKEND_URL}/api/watchlist/${ticker}?user_id=${encodeURIComponent(userId)}`,
+    { method: "DELETE" }
+  );
+  if (!res.ok && res.status !== 204) {
+    throw new Error(`Failed to remove stock (${res.status})`);
+  }
+}
+
 /**
  * Looks up the most recent *completed* analysis for a ticker directly,
  * without needing a request_id — backs the Stock Detail page when a user

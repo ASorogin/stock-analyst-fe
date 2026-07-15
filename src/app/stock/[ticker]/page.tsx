@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { createSupabaseServerClient } from "../../../lib/supabase/server";
 import { getLatestAnalysis, getWatchlist } from "@/lib/api";
 import { AnalysisView } from "@/components/AnalysisView";
 import { AnalysisPending } from "@/components/AnalysisPending";
+import { DeleteStockButton } from "@/components/DeleteStockButton";
 import type { Approach } from "@/types/spec";
 
 export default async function StockDetailPage({
@@ -53,6 +55,19 @@ export default async function StockDetailPage({
 
   return (
     <main className="mx-auto max-w-2xl p-6">
+      <div className="mb-6 flex items-center justify-between gap-3">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition hover:text-gray-800"
+        >
+          <span aria-hidden className="text-base leading-none">
+            ←
+          </span>
+          Back to dashboard
+        </Link>
+        <DeleteStockButton userId={user.id} ticker={ticker} />
+      </div>
+
       {existing ? (
         <AnalysisView analysis={existing} />
       ) : (
